@@ -3,7 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# LooUQ Ignored
+**_vm/
+
 # User-specific files
+*.vcxproj*
+*.vcxitems*
 *.suo
 *.user
 *.userosscache
