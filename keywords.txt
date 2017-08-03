@@ -1,0 +1,25 @@
+###############################################
+# Syntax Coloring Map For iotQi Device Arduino
+###############################################
+
+###############################################
+# Datatypes (KEYWORD1)
+###############################################
+
+iotQiClient				KEYWORD1
+
+###############################################
+# Methods and Functions (KEYWORD2)
+###############################################
+
+Init	KEYWORD2
+Begin	KEYWORD2
+DoWork		KEYWORD2
+SendAlert		KEYWORD2
+SendTelemetry	KEYWORD2
+
+###############################################
+# Constants (LITERAL1)
+###############################################
+
+iotqiClient	LITERAL1
