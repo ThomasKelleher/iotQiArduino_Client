@@ -38,7 +38,7 @@ The device you create in the iotQi Setup, will be given a connection string and 
 ## Examples
 Along with the iotQi library, there are a few [examples](./examples/) included to get you started:
 * [WiFi-basic](./examples/iotQi-WiFi-basic/)
-* [LoRa-basic](./examples/iotQi-LoRa-Basic/)
+* [LoRa-basic](./examples/iotQi-LoRa-basic/)
 
 
 __________________________________________
@@ -47,7 +47,7 @@ __________________________________________
 ### Feather M0
 A known issue in the Azure library must be patched prior to any compiling for the Feather M0. The Azure library utilizes the WINC1500 library by Adafruit. Adafruit however has deemed this library deprecated and has switched to support WiFi101 by Arduino.
 * Winc1500 patch:
-	* Open your Arduino directory ( usually "Aocuments/Arduino/" ) and then open the "libraries" folder. If the Azure library is installed, you should be able to navigate to "AzureIoTUtility/src/adapters/", then open sslClient_arduino.cpp. Under the "#ifdef ARDUINO_ARCH_ESP8266" block, there is a "#elif ARDUINO_SAMD_FEATHER_M0" block switch. Comment this block out (from the #elif to the #else, but not the #else itself). Save the *.cpp and close the file.
+	* Open your Arduino directory ( usually "Documents/Arduino/" ) and then open the "libraries" folder. If the Azure library is installed, you should be able to navigate to "AzureIoTUtility/src/adapters/", then open sslClient_arduino.cpp. Under the "#ifdef ARDUINO_ARCH_ESP8266" block, there is a "#elif ARDUINO_SAMD_FEATHER_M0" block switch. Comment this block out (from the #elif to the #else, but not the #else itself). Save the *.cpp and close the file.
 
 ---
 For more information about iotQi please visit:
