@@ -56,7 +56,7 @@ void loop()
 	//  }
 	//  if ( doUserWork )
 	//  {
-	//		 ->User model implements telemetry samples
+	//		 -> User model implements telemetry samples
 	//      UserModel_DoWork();
 	//  }
 	iotqiClient.SendTelemetry("wind-telemetry", WindSpeed, prevWindTelemetry, TELEMETRY_INTERVAL);
