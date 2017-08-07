@@ -9,8 +9,8 @@
  *  Setup your WiFi and device connection string here
 ================================================================================================================================= */
 
-#define WIFI_SSID   "<WiFi SSID>"            // your network SSID (name)
-#define WIFI_PW     "<WiFi Password>"        // your network password (use for WPA, or use as key for WEP)
+#define WIFI_SSID   "WiFi_SSID"            // your network SSID (name)
+#define WIFI_PW     "WiFi_Password"        // your network password (use for WPA, or use as key for WEP)
  
 /* Below is a typical connection string to the iotQi device hub,  you get this information from iotQi Setup on the device pages (the example below is not functional)
  *
@@ -21,7 +21,7 @@
 #define IOTQI_CONNECTION "HostName=iothub-prod-loouq.azure-devices.net;DeviceId=ba93e7bb-b2f3-42fa-a272-1c94e2389c25;SharedAccessKey=wnQr8WVBC8R43weh3Nf4sZ8cHJfvrYRfvZW+sioioZc="
 */
 
-#define IOTQI_CONNECTION "<Connection String>"	// your IoThub connection key
+#define IOTQI_CONNECTION "ConnectionString"	// your IoThub connection key
 /* =================================================================================================================================
 ================================================================================================================================= */
 
