@@ -19,7 +19,7 @@
 #define IOTQI_CONNECTION "HostName=iothub-prod-loouq.azure-devices.net;DeviceId=ba93e7bb-b2f3-42fa-a272-1c94e2389c25;SharedAccessKey=wnQr8WVBC8R43weh3Nf4sZ8cHJfvrYRfvZW+sioioZc="
 */
 
-#define IOTQI_CONNECTION "HostName=iothub-a-prod-loouq.azure-devices.net;DeviceId=6f259e9c-6c56-4f7b-bbd3-2af25f320fe1;SharedAccessKey=1fHRFpUNATjexMUC8m6reAtzL6n99X+gNMjvM0oRxOQ=" // @ IoT Hub Connection String
+#define IOTQI_CONNECTION "ConnectionString" // @ IoT Hub Connection String
 /* =================================================================================================================================
 ================================================================================================================================= */
 
