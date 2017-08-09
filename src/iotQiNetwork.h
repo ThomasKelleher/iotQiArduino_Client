@@ -1,15 +1,17 @@
 // iotQiNetwork.h
 
-#include <globals.h>
 
-#ifndef     _IOTQINETWORK_h
+
+#ifndef _IOTQINETWORK_h
 #define	_IOTQINETWORK_h
 
+#include <globals.h>
+
 #pragma	region	Enumerate Network Types
-//#define	WIFI					0
-//#define	LORA				1
+//#define	WIFI		0
+//#define	LORA		1
 //#define	BLUETOOTH	2
-//#define	LTE					3
+//#define	LTE			3
 #pragma endregion
 
 #ifdef __cplusplus
