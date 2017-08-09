@@ -12,7 +12,7 @@
 #include <iotQiDiagnostics.h>
 
 /// # IotQi Constants 
-#define DEVICEID_SIZE 38
+#define DEVICEID_SIZE 37
 #define DEVICECONNECTIONSTRING_SIZE 160
 #define IOTQI_SCHEMA_VERSION	"v-1.0"
 #define IOTQI_CODE_VERSION "iotQi MQTT v1.0"
