@@ -15,7 +15,7 @@
 #include "userModel.h"
 // end: project includes
 
-static iotQiWiFiNetwork iotqiNetwork;
+iotQiWiFiNetwork iotqiNetwork;
 
 /* setup() ------------------------------------------------------------------------------------------------------------ */
 
