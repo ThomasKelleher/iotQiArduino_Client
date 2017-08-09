@@ -37,7 +37,7 @@ void setup() {
 
 	// Example Alerts
 	iotqiClient.SendAlert("greeting", "Hello World!"); // Just a Subject
-	iotqiClient.SendAlert("windAlert", "Wind Velocity High!", WindAlert); // Subject and a body
+	iotqiClient.SendAlert("wind-alert", "Wind Velocity High!", WindAlert); // Subject and a body
 }
 
 
