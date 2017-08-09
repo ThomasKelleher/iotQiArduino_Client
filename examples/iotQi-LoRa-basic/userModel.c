@@ -84,6 +84,15 @@ EXECUTE_COMMAND_RESULT SetAirResistance(UserModel* device, int Position)
 {
 	(void)device;
 	(void)printf("Setting Air Resistance Position to %d.\r\n", Position);
+	unsigned char* buffer; size_t size;
+	if (SERIALIZE(&buffer, &size, device->WindSpeed))
+	{
+		return HTTP_ERROR;
+	}
+	else
+	{
+		SetResponseBody(buffer, size);
+	}
 	return HTTP_OK;
 }
 
@@ -108,6 +117,24 @@ TelemetryTemplate WindSpeed(STRING_HANDLE* sample_data)
 		free(msgBuffer);
 		//(void)printf("WindSpeed: serialization result=%.*s size=%d \r\n", STRING_length(*sample_data), STRING_c_str(*sample_data), msgSize);
 		return STRING_construct_sprintf("Wind Speed:%d", userModel->WindSpeed);
+	}
+}
+
+AlertTemplate WindAlert(STRING_HANDLE* alert_data)
+{
+	userModel->WindSpeed = 25;
+
+	unsigned char* msgBuffer;
+	size_t msgSize;
+
+	if (SERIALIZE(&msgBuffer, &msgSize, userModel->WindSpeed))
+	{
+		(void)printf("*** Failed to serialize model to message\r\n");
+	}
+	else
+	{
+		*alert_data = STRING_construct_n(msgBuffer, msgSize);
+		free(msgBuffer);
 	}
 }
 
@@ -162,7 +189,7 @@ IOTQIMODEL_RESULT UserModel_GetCommands(STRING_HANDLE commandsMeta)
 }
 
 
-EXECUTE_COMMAND_RESULT UserModel_CommandMsgCallback(char* cmdBuffer)
+EXECUTE_COMMAND_RESULT UserModel_CommandMsgCallback(const char* cmdBuffer)
 {
 #ifdef IOTQI_DEBUG
 	(void)printf("> Invoking user command: %s \r\n", cmdBuffer);
