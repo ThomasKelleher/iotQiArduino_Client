@@ -1,3 +1,3 @@
-*.cpp linguist-vendored=Arduino
-*.h   linguist-vendored=Arduino
-*.c   linguist-vendored=Arduino
+*.cpp linguist-language=Arduino
+*.h   linguist-language=Arduino
+*.c   linguist-language=Arduino
