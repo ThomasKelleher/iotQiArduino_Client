@@ -121,9 +121,6 @@ TelemetryTemplate WindSpeed(STRING_HANDLE* sample_data)
     {
 		*sample_data = STRING_construct_n(msgBuffer, msgSize);
 		free(msgBuffer);
-	#ifdef _DEBUG
-		(void)printf("WindSpeed: serialization result=%.*s size=%d \r\n", STRING_length(*sample_data), STRING_c_str(*sample_data), msgSize);
-	#endif // _DEBUG
 		return STRING_construct_sprintf("Wind Speed:%d", userModel->WindSpeed);
     }
 }
