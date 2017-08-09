@@ -20,10 +20,7 @@ iotQiWiFiNetwork iotqiNetwork;
 /* setup() ------------------------------------------------------------------------------------------------------------ */
 
 void setup() {
-	// Setup the serial communication
-	delay(3000);
-	Serial.begin(115200);
-	pinMode(13, OUTPUT);
+	delay( 3000 );
 
 	// Network Connection Requirements
 	iotqiNetwork.SetPassword(WIFI_PW);

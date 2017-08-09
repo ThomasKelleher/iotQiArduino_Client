@@ -23,10 +23,7 @@ iotQiLoRaNetwork iotqiNetwork(radioDriver);
 
 
 void setup() {
-	// Setup the serial communication
-	delay( 5000 );
-	Serial.begin( 115200 );
-	pinMode(13, HIGH);
+	delay( 3000 );
 
 	// Network Connection Requirements
 	radioDriver.init();
@@ -42,7 +39,6 @@ void setup() {
 	// Example Alerts
 	iotqiClient.SendAlert("greeting", "Hello World!"); // Just a Subject
 	iotqiClient.SendAlert("wind-alert", "Wind Velocity High!", WindAlert); // Subject and a body
-	pinMode(13, LOW);
 }
 
 
