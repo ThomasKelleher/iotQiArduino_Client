@@ -1,0 +1,2 @@
+*.cpp linguist-vendored=Arduino
+*.h   linguist-vendored=Arduino
