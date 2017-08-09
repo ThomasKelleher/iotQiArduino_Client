@@ -55,11 +55,11 @@ iotQiClient::~iotQiClient()
 
 bool iotQiClient::Init(const char* iotqiHubConnection, iotQiNetwork &networkClient)
 {
-	Debug::WriteLine("> Starting iotQi...");
+	Debug::WriteLine("\n=== Initializing iotQi ===");
 
 	networkTransport = &networkClient;
 	SetGlobalDeviceIdFromConnectionString(iotqiHubConnection);
-	Debug::Write("init(): DeviceId: "); Debug::WriteLine(deviceId);
+	Debug::Write("> Setting DeviceId: "); Debug::WriteLine(deviceId);
 
 	networkTransport->init();
 	networkTransport->begin();
