@@ -1,28 +1,53 @@
-// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+/*
+	Copyright (c) 2016 LooUQ Incorporated.
+
+	The GNU Licence(GNU)
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <iotQi.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-
-
-#ifdef MBED_BUILD_TIMESTAMP
-#include "certs.h"
-#endif // MBED_BUILD_TIMESTAMP
-
 #include <Arduino.h>
 #include <globals.h>
 #include <iotQiModel.h>
-#include <iotQi.h>
 #include <iotQiUtility.h>
 #include <azure_c_shared_utility\platform.h>
+#ifdef MBED_BUILD_TIMESTAMP
+	#include "certs.h"
+#endif // MBED_BUILD_TIMESTAMP
 
-// =======================================================================================================================================
+/* =======================================================================================
+ * Global Memebers
+ * =====================================================================================*/
+
+/// <summary>
+/// A global instance of the <see cref="iotQiClient"/> class.</summary>
 iotQiClient iotqiClient;
 
-// set global pointers
+/// <summary>
+/// Global Pointer to the User-Defined 'GetCommands' function</summary>
 USERMODEL_GETCOMMANDS fptrUserGetCommands;
+/// <summary>
+/// Global Pointer to the User-Defined 'CommandMessageCallback' function</summary>
 USERMODEL_COMMANDMSGCALLBACK fptrUserCmdMsgCallback;
+
+/// <summary>
+/// Command Response Structure for responding to commands.</summary>
 struct CommandResponse
 {
 	char* buffer;
@@ -30,37 +55,58 @@ struct CommandResponse
 	int success_code;
 }static CmdResponse;
 
-// static members
+/// <summary>
+/// Static Network memeber for the iotQiClient.</summary>
 iotQiNetwork* iotQiClient::networkTransport = nullptr;
+/// <summary>
+/// Static Message Tracking Id memeber for the iotQiClient.</summary>
 unsigned int iotQiClient::msgTrackingId = 0;
+/// <summary>
+/// Static IoTHub Handle memeber for the iotQiClient.</summary>
 IOTHUB_CLIENT_LL_HANDLE iotQiClient::iotHubClientHandle = 0;
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
+/// <summary>
+/// Creates a new instance of the <see cref="iotQiClient"/> class.</summary>
 iotQiClient::iotQiClient()
 	:
 	iotqiInitState(Uninitialized),
 	lastTelemetry(0)
 {
+	/// + Initialize the Command Response
 	CmdResponse.buffer = NULL;
 	CmdResponse.buffer_size = 0;
 	CmdResponse.success_code = 0;
 }
 
+/// <summary>
+/// Destroys 'this' instance of the <see cref="iotQiClient"/> class.</summary>
 iotQiClient::~iotQiClient()
 {
+	/// ~ Disconnect the networkTransport
+	networkTransport->end();
+	networkTransport = nullptr;
 }
 
+/// <summary>
+/// Initializes an instance of the <see cref="iotQiClient"/> class.
+/// </summary>
+/// <param name="iotqiHubConnection">The iotQi Connection String.</param>
+/// <param name="networkClient">The network client the iotQi client uses as a protocol.</param>
+/// <returns>bool.</returns>
 bool iotQiClient::Init(const char* iotqiHubConnection, iotQiNetwork &networkClient)
 {
 	Debug::WriteLine("\n=== Initializing iotQi ===");
 
+	/// <- Set the network transport and the global device Id
 	networkTransport = &networkClient;
 	SetGlobalDeviceIdFromConnectionString(iotqiHubConnection);
 	Debug::Write("> Setting DeviceId: "); Debug::WriteLine(deviceId);
 
+	/// ! Setup and begin the network transport
 	networkTransport->init();
 	networkTransport->begin();
 	networkTransport->updateNetworkInfo();
@@ -71,6 +117,7 @@ bool iotQiClient::Init(const char* iotqiHubConnection, iotQiNetwork &networkClie
 	}
 	else
 	{
+		/// ? If the platform initializes, initialize the serializer
 		iotqiInitState = PlatformInit;
 		Debug::WriteLine("> iotQi Platform started");
 		if (serializer_init(NULL) != SERIALIZER_OK)
@@ -79,9 +126,9 @@ bool iotQiClient::Init(const char* iotqiHubConnection, iotQiNetwork &networkClie
 		}
 		else
 		{
+			/// ? If the serializer initializes, create the IotHubClient
 			Debug::WriteLine("> iotQi Serializer started");
 			iotqiInitState = SerializerInit;
-			// TODO: Cutoff LoRa Radio
 
 			iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(iotqiHubConnection, MQTT_Protocol);
 			if (iotHubClientHandle == NULL)
@@ -90,6 +137,7 @@ bool iotQiClient::Init(const char* iotqiHubConnection, iotQiNetwork &networkClie
 			}
 			else
 			{
+				/// ? If the IotHubClient is created, Set the message callback(s)
 				iotqiInitState = IotHubClientHandleInit;
 
 				#ifdef MBED_BUILD_TIMESTAMP
@@ -114,15 +162,17 @@ bool iotQiClient::Init(const char* iotqiHubConnection, iotQiNetwork &networkClie
 
 	if (iotqiInitState != MessageCallbackInit)
 	{
-		//Debug::WriteLine("*** Error initializing iotQi. Please verify both the time and connection string (in settings.h) are valid ***");
+		/// ? If there is any failure, log it and run deinit()
+		Debug::WriteLine("*** Error initializing iotQi. Please verify both the time and connection string (in settings.h) are valid ***");
 		this->deinit();
 		return false;
 	}
-
-	//Debug::WriteLine("iotQi initialized.");
 	return true;
 }
 
+/// <summary>
+/// Begins the <see cref="iotQiClient"/>.</summary>
+/// <return>bool.</return>
 bool iotQiClient::Begin()
 {
 	if (initIotqiModel() != MODEL_OK)
@@ -132,6 +182,7 @@ bool iotQiClient::Begin()
 	}
 	else
 	{
+		/// ? If the iotQi Model initializes, Send the device start alert
 		ALERT_sendDeviceStart();
 		Debug::WriteLine("Sent Alert !");
 		return true;
@@ -142,17 +193,31 @@ bool iotQiClient::Begin()
 // Setters
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
+/// <summary>
+/// Sets the callbacks for the user-defined functions in the user model.</summary>
+/// <param name="getUserCommands">Function pointer that points to the GetUserCommands function.</param>
+/// <param name="userCommandMsgCallback">Function pointer that points to the UserCommandMessage Callback function.</param>
 void iotQiClient::SetCallbacks(USERMODEL_GETCOMMANDS getUserCommands, USERMODEL_COMMANDMSGCALLBACK userCommandMsgCallback)
 {
+	/// <- Set the global function pointers pointing to the user model functions
 	fptrUserGetCommands = getUserCommands;
 	fptrUserCmdMsgCallback = userCommandMsgCallback;
 }
 
+/// <summary>
+/// Sets the Response body for responding to processed commands.</summary>
+/// <param name="buffer">A character array representing the 'body' to be sent back.</param>
+/// <param name="size">The size of the character array to be sent back.</param>
 extern "C" void SetResponseBody(unsigned char * buffer, size_t size)
 {
+	/// ? If the response buffer is not empty, delete it
 	if (CmdResponse.buffer) delete[] CmdResponse.buffer;
+
+	/// + Allocate new memory for the buffer
 	CmdResponse.buffer = new char[size + 1];
 	CmdResponse.buffer_size = size;
+
+	/// * Copy the given buffer to the command reponse buffer
 	strncpy(CmdResponse.buffer, (char*)buffer, size);
 	CmdResponse.buffer[size] = '\0';
 	free(buffer);
@@ -162,21 +227,34 @@ extern "C" void SetResponseBody(unsigned char * buffer, size_t size)
 // Communication
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
+/// <summary>
+/// Sends an alert with the name of the alert, a subject, and a body message.</summary>
+/// <param name="alertName">A character array representing the 'name' of the alert.</param>
+/// <param name="alertSubject">A character array representing the 'subject' of the alert.</param>
 void iotQiClient::SendAlert(const char * alertName, const char * alertSubject)
 {
+	/// + Allocate new character arrays for copying the alert name and subject
 	char* cpyName = new char[strlen(alertName)+1];
 	char* cpySubject = new char[strlen(alertSubject)+1];
 
+	/// * Copy the arrays with the null characters (hence the '+1')
 	memcpy(cpyName, alertName, strlen(alertName)+1);
 	memcpy(cpySubject, alertSubject, strlen(alertSubject)+1);
 
+	/// > Clean the character arrays of invalid characters, and replace them with valid ones
 	cleanStr(cpyName, "=", '~');
 	cleanStr(cpySubject, "=", '~');
 	char blankBuffer[] = { "{}" };
+
+	/// >> Send the alert, then delete the buffers
 	sendAlertInternal(blankBuffer, 3, IotqiEventClass_User, cpyName, cpySubject);
 	delete[] cpyName; delete[] cpySubject;
 }
 
+/// <summary>
+/// Sends an alert with just the name of the alert, and a subject.</summary>
+/// <param name="alertName">A character array representing the 'name' of the alert.</param>
+/// <param name="alertSubject">A character array representing the 'subject' of the alert.</param>
 void iotQiClient::SendAlert(const char* alertName, const char* alertSubject, AlertDelegate a_temp)
 {
 	STRING_HANDLE serial_data;
@@ -194,7 +272,7 @@ void iotQiClient::SendAlert(const char* alertName, const char* alertSubject, Ale
 	STRING_delete(serial_data);
 }
 
-void iotQiClient::SendTelemetry(char* eventName, TelemetryDelegate t_temp, int &prevTelemetry, int interval)
+void iotQiClient::SendTelemetry(char* eventName, TelemetryDelegate t_temp, unsigned long &prevTelemetry, unsigned long interval)
 {
 	if ( !interval || (millis() - prevTelemetry >= (interval * 1000)))
 	{
