@@ -16,20 +16,16 @@
 #include "userModel.h"
 // end: project includes
 
-iotQiLoRaNetwork iotqiNetwork;
 RH_RF95 radioDriver(SLAVE_SELECT_PIN, INTERRUPT_PIN);
+iotQiLoRaNetwork iotqiNetwork(radioDriver);
 
 /* setup() ------------------------------------------------------------------------------------------------------------ */
 
 
 void setup() {
-	// Setup the serial communication
-	delay( 5000 );
-	Serial.begin( 115200 );
-	pinMode(13, HIGH);
+	delay( 3000 );
 
 	// Network Connection Requirements
-	iotqiNetwork.SetDriver( radioDriver );
 	radioDriver.init();
 	radioDriver.setFrequency( FREQUENCY );
 	radioDriver.setTxPower( MAX_SIGNAL_STRENGTH );
@@ -39,11 +35,15 @@ void setup() {
 	iotqiClient.Begin();
 	iotqiClient.SetCallbacks( UserModel_GetCommands, UserModel_CommandMsgCallback );
 	initUserModel();
+
+	// Example Alerts
+	iotqiClient.SendAlert("greeting", "Hello World!"); // Just a Subject
+	iotqiClient.SendAlert("wind-alert", "Wind Velocity High!", WindAlert); // Subject and a body
 }
 
 
 /* loop() ------------------------------------------------------------------------------------------------------------- */
-
+int prevWindTelemetry = 0;
 
 void loop()
 {
@@ -59,5 +59,5 @@ void loop()
 	// {
 	// 	UserModel_DoWork();
 	// }
-	iotqiClient.SendTelemetry( "wind-telemetry", WindSpeed, TELEMETRY_INTERVAL );
+	iotqiClient.SendTelemetry( "wind-telemetry", WindSpeed, prevWindTelemetry, TELEMETRY_INTERVAL );
 }

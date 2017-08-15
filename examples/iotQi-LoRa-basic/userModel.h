@@ -14,9 +14,10 @@ extern "C" {
 	void deinitUserModel();
 
 	IOTQIMODEL_RESULT UserModel_GetCommands(STRING_HANDLE commandsMeta);
-	EXECUTE_COMMAND_RESULT UserModel_CommandMsgCallback(char* cmdBuffer);
+	EXECUTE_COMMAND_RESULT UserModel_CommandMsgCallback(const char* cmdBuffer);
 
 	TelemetryTemplate WindSpeed(STRING_HANDLE* sample_data);
+	AlertTemplate WindAlert(STRING_HANDLE* alert_data);
 
 #ifdef __cplusplus
 }

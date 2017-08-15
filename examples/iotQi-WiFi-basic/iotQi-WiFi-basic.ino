@@ -15,15 +15,12 @@
 #include "userModel.h"
 // end: project includes
 
-static iotQiWiFiNetwork iotqiNetwork;
+iotQiWiFiNetwork iotqiNetwork;
 
 /* setup() ------------------------------------------------------------------------------------------------------------ */
 
 void setup() {
-	// Setup the serial communication
-	delay(3000);
-	Serial.begin(115200);
-	pinMode(13, OUTPUT);
+	delay( 3000 );
 
 	// Network Connection Requirements
 	iotqiNetwork.SetPassword(WIFI_PW);
@@ -37,7 +34,7 @@ void setup() {
 
 	// Example Alerts
 	iotqiClient.SendAlert("greeting", "Hello World!"); // Just a Subject
-	iotqiClient.SendAlert("windAlert", "Wind Velocity High!", WindAlert); // Subject and a body
+	iotqiClient.SendAlert("wind-alert", "Wind Velocity High!", WindAlert); // Subject and a body
 }
 
 
@@ -56,7 +53,7 @@ void loop()
 	//  }
 	//  if ( doUserWork )
 	//  {
-	//		 ->User model implements telemetry samples
+	//		 -> User model implements telemetry samples
 	//      UserModel_DoWork();
 	//  }
 	iotqiClient.SendTelemetry("wind-telemetry", WindSpeed, prevWindTelemetry, TELEMETRY_INTERVAL);

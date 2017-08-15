@@ -70,12 +70,12 @@ IOTQIMODEL_RESULT initIotqiModel()
 	iotqiContext = CREATE_MODEL_INSTANCE(IotqiNamespace, IotqiModel);
 	if (iotqiContext == NULL)
 	{
-#ifdef IOTQI_DEBUG
+#ifdef _DEBUG
 		(void)printf("***Failed on to create iotQi device model\r\n");
 #endif
 		return MODEL_ERROR;
 	}
-#ifdef IOTQI_DEBUG
+#ifdef _DEBUG
 	(void)printf("iotQi Device Model Initialized\r\n");
 #endif
 	return MODEL_OK;
@@ -93,7 +93,9 @@ void deinitIotqiModel()
 EXECUTE_COMMAND_RESULT getdeviceinfo(IotqiModel* iotqiContext)
 {
 	(void)iotqiContext;
+#ifdef _DEBUG
 	(void)printf("-\tReponding to DeviceId request...\r\n");
+#endif // _DEBUG
 
 	unsigned char* buffer;
 	size_t size;
@@ -137,7 +139,7 @@ EXECUTE_COMMAND_RESULT getnetworkinfo(IotqiModel* iotqiContext)
 EXECUTE_COMMAND_RESULT getcommandinfo(IotqiModel* iotqiContext)
 {
 	(void)iotqiContext;
-#ifdef IOTQI_DEBUG
+#ifdef _DEBUG
 	(void)printf("Reponding to getcommandinfo request...\r\n");
 #endif
 
@@ -149,7 +151,7 @@ EXECUTE_COMMAND_RESULT getcommandinfo(IotqiModel* iotqiContext)
 
 	if (iotqiCommandsMeta == NULL || userCommandsMeta == NULL)
 	{
-#ifdef _DEBUG_MODEL
+#ifdef _DEBUG
 		(void)printf("Failed on creating strings for commands metadata\r\n");
 #endif
 	}
@@ -159,7 +161,7 @@ EXECUTE_COMMAND_RESULT getcommandinfo(IotqiModel* iotqiContext)
 		\/          */
 		if (IotqiModel_GetCommands(iotqiCommandsMeta) != iotqiOk || (((*fptrUserGetCommands)(userCommandsMeta)) != iotqiOk))
 		{
-#ifdef _DEBUG_MODEL
+#ifdef _DEBUG
 			(void)printf("Failed serializing command metadata\r\n");
 #endif
 		}
@@ -173,7 +175,7 @@ EXECUTE_COMMAND_RESULT getcommandinfo(IotqiModel* iotqiContext)
 			/* Here is the actual serialization of the device message */
 			if (SERIALIZE(&buffer, &size, iotqiContext->commandInfo) != CODEFIRST_OK)
 			{
-#ifdef _DEBUG_MODEL
+#ifdef _DEBUG
 				(void)printf("Failed serializing command response\r\n");
 #endif
 				return HTTP_ERROR;
@@ -195,7 +197,7 @@ EXECUTE_COMMAND_RESULT getcommandinfo(IotqiModel* iotqiContext)
 
 EXECUTE_COMMAND_RESULT IotqiModel_InvokeCommand(const char* cmdBuffer)
 {
-    #if defined(IOTQI_DEBUG)
+    #ifdef _DEBUG
     (void)printf("> Invoking iotQi command: %s \r\n", cmdBuffer);
     #endif
 
@@ -204,7 +206,7 @@ EXECUTE_COMMAND_RESULT IotqiModel_InvokeCommand(const char* cmdBuffer)
 
 IOTQIMODEL_RESULT IotqiModel_GetCommands(STRING_HANDLE commandsMeta)
 {
-#if defined(IOTQI_DEBUG)
+#ifdef _DEBUG
 	(void)printf("> Fetching iotQi commands\r\n");
 #endif
 
@@ -230,12 +232,14 @@ IOTQIMODEL_RESULT TEMPLATE_deviceStarted(char** sendBuffer, size_t* size)
 
 	if ( SERIALIZE(sendBuffer, size, iotqiContext->deviceInfo, iotqiContext->networkInfo) != CODEFIRST_OK)
 	{
+#ifdef _DEBUG
 		(void)printf("*** Error serializing device start message ***\r\n");
+#endif // _DEBUG
 		return MODEL_ERROR;
 	}
 	else
 	{
-#ifdef _DEBUG_MODEL
+#ifdef _DEBUG
 		(void)printf("DeviceStartMsg: %.*s \r\n", *size, *sendBuffer);
 #endif
 		return MODEL_OK;

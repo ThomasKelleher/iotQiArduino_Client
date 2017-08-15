@@ -75,7 +75,9 @@ EXECUTE_COMMAND_RESULT TurnFanOn(UserModel* device)
 EXECUTE_COMMAND_RESULT TurnFanOff(UserModel* device)
 {
     (void)device;
-    (void)printf("Turning fan off.\r\n");
+	#ifdef _DEBUG
+	(void)printf("Turning fan off.\r\n");
+	#endif // _DEBUG
 	digitalWrite(13, LOW);
     return HTTP_OK;
 }
@@ -83,7 +85,9 @@ EXECUTE_COMMAND_RESULT TurnFanOff(UserModel* device)
 EXECUTE_COMMAND_RESULT SetAirResistance(UserModel* device, int Position)
 {
     (void)device;
+	#ifdef _DEBUG
     (void)printf("Setting Air Resistance Position to %d.\r\n", Position);
+	#endif // _DEBUG
 	unsigned char* buffer; size_t size;
 	if (SERIALIZE(&buffer, &size, device->WindSpeed))
 	{
@@ -109,13 +113,14 @@ TelemetryTemplate WindSpeed(STRING_HANDLE* sample_data)
 
     if ( SERIALIZE(&msgBuffer, &msgSize, userModel->DeviceId, userModel->WindSpeed) )
     {
+	#ifdef _DEBUG
         (void)printf("***Failed to serialize model to message\r\n");
+	#endif // _DEBUG
     }
     else
     {
 		*sample_data = STRING_construct_n(msgBuffer, msgSize);
 		free(msgBuffer);
-		//(void)printf("WindSpeed: serialization result=%.*s size=%d \r\n", STRING_length(*sample_data), STRING_c_str(*sample_data), msgSize);
 		return STRING_construct_sprintf("Wind Speed:%d", userModel->WindSpeed);
     }
 }
@@ -129,7 +134,9 @@ AlertTemplate WindAlert(STRING_HANDLE* alert_data)
 
 	if (SERIALIZE(&msgBuffer, &msgSize, userModel->WindSpeed))
 	{
+	#ifdef _DEBUG
 		(void)printf("*** Failed to serialize model to message\r\n");
+	#endif // _DEBUG
 	}
 	else
 	{
@@ -158,16 +165,22 @@ IOTQIMODEL_RESULT initUserModel()
 	userModel = CREATE_MODEL_INSTANCE(UserModelNamespace, UserModel);
 	if (userModel == NULL)
 	{
+	#ifdef _DEBUG
 		(void)printf("Failed on create user-defined model\r\n");
+	#endif // _DEBUG
         return MODEL_ERROR;
 	}
+	#ifdef _DEBUG
     (void)printf("=== User-Defined Model Initialized ===\r\n\n");
+	#endif // _DEBUG
     return MODEL_OK;
 }
 
 void deinitUserModel()
 {
+	#ifdef _DEBUG
     (void)printf("Deconstructing User-Defined Model\r\n");
+	#endif // _DEBUG
 	DESTROY_MODEL_INSTANCE(userModel);
 }
 
@@ -191,9 +204,9 @@ IOTQIMODEL_RESULT UserModel_GetCommands(STRING_HANDLE commandsMeta)
 
 EXECUTE_COMMAND_RESULT UserModel_CommandMsgCallback(const char* cmdBuffer)
 {
-    #ifdef IOTQI_DEBUG
+	#ifdef _DEBUG
     (void)printf("> Invoking user command: %s \r\n", cmdBuffer);
-    #endif
+	#endif // _DEBUG
 
     EXECUTE_COMMAND_RESULT result = EXECUTE_COMMAND(userModel, cmdBuffer);
 }
