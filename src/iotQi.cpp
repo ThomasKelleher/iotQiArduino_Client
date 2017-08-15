@@ -194,7 +194,7 @@ void iotQiClient::SendAlert(const char* alertName, const char* alertSubject, Ale
 	STRING_delete(serial_data);
 }
 
-void iotQiClient::SendTelemetry(char* eventName, TelemetryDelegate t_temp, int &prevTelemetry, int interval)
+void iotQiClient::SendTelemetry(char* eventName, TelemetryDelegate t_temp, unsigned long &prevTelemetry, int interval)
 {
 	if ( !interval || (millis() - prevTelemetry >= (interval * 1000)))
 	{

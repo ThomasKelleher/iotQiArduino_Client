@@ -60,7 +60,7 @@ END_NAMESPACE(UserModelNamespace);
 /* Model variables ====================================================================================================================== */
 UserModel* userModel;
 
-/* Add any persistance model variables here */
+/* Add any global or persistant model variables here */
 
 /* Model command methods ================================================================================================================= */
 

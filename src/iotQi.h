@@ -65,7 +65,7 @@ public:
 	void SetCallbacks(USERMODEL_GETCOMMANDS getUserCommands, USERMODEL_COMMANDMSGCALLBACK userCommandMsgCallback);
 	//void SetResponseBody(const unsigned char* buffer, size_t size);
 
-	void SendTelemetry( char* eventName, TelemetryDelegate t_temp, int &prevTelemetry, int interval=NULL );
+	void SendTelemetry( char* eventName, TelemetryDelegate t_temp, unsigned long &prevTelemetry, int interval=NULL );
 	void SendAlert(const char* alertName, const char* alertSubject);
 	void SendAlert(const char* alertName, const char* alertSubject, AlertDelegate a_temp);
 	
