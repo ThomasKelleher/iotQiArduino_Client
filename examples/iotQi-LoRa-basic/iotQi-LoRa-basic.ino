@@ -43,7 +43,7 @@ void setup() {
 
 
 /* loop() ------------------------------------------------------------------------------------------------------------- */
-int prevWindTelemetry = 0;
+unsigned long prevWindTelemetry = 0;
 
 void loop()
 {
